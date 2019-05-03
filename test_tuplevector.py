@@ -44,23 +44,19 @@ def test_isnamedtuple():
     assert vec.is_namedtuple(P1) == True
     assert vec.is_namedtuple(T1) == False
 
-def test_tuple_validation():
-    with pytest.raises(ValueError):
-        vec.tuple_validation(NT1)
-        vec.tuple_validation(NT2)
-    with pytest.raises(TypeError):
-        vec.tuple_validation(LT1)
-        vec.tuple_validation(LT2)
-    assert vec.tuple_validation(P1) is None
-    assert vec.tuple_validation(T1) is None
-    assert vec.tuple_validation(L1) is None
+def test_valid_tuple():
+    assert vec.valid_tuple(NT1) == False
+    assert vec.valid_tuple(NT2) == False
+    assert vec.valid_tuple(LT1) == False
+    assert vec.valid_tuple(P1) == True
+    assert vec.valid_tuple(T1) == True
+    assert vec.valid_tuple(L1) == True
     
 def test_same_shape():
-    with pytest.raises(ValueError):
-        vec.same_shape(P1, D1)
-        vec.same_shape(T2, L1)
-    assert vec.same_shape(NT1, NT2) is None
-    assert vec.same_shape(T1, P3) is None
+    assert vec.same_shape(P1, D1) == False
+    assert vec.same_shape(T2, L1) == False
+    assert vec.same_shape(NT1, NT2) == True
+    assert vec.same_shape(T1, P3) == True
     
 def test_dot():
     assert vec.dot(P1, P3) == 5.4

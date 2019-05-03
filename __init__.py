@@ -31,21 +31,25 @@ def is_namedtuple(t: tuple) -> bool:
         return False
     return all(type(n)==str for n in fields)
 
-def tuple_validation(t: tuple) -> None:
+def valid_tuple(t: tuple) -> None:
     """
     Returns True if tuple, 't', passes all validation checks.
     Returns False otherwise.
     """
-    all_numbers(t)
-    if not (type(t) is tuple or is_namedtuple(t)):
-        raise TypeError("Inputs tuples must be tuples: {}".format(t))
+    if not (type(t) is tuple or is_namedtuple(t)): return False
+    if not all_numbers(t): return False
+    return True
+
+        #raise TypeError("Inputs tuples must be tuples: {}".format(t))
 
 def same_shape(t1: tuple, t2: tuple) -> None:
     """
     Returns True if t1 and t2 are the same shape. 
     False, otherwise."""
-    if not len(t1) == len(t2):
-        raise ValueError("Tuples for vector math must be same size, not lengths {} and {}".format(len(t1), len(t2)))
+    if t1 and t2:
+        return len(t1) == len(t2)
+    return False
+        #raise ValueError("Tuples for vector math must be same size, not lengths {} and {}".format(len(t1), len(t2)))
 
 def all_numbers(t: tuple) -> None:
     """
@@ -53,15 +57,19 @@ def all_numbers(t: tuple) -> None:
     False otherwise.
     """
     for digit in t:
-        if not isinstance(digit, (int, float)):
-            raise ValueError("Tuples for vector operations must be all numbers: {}".format(t))
+        if not isinstance(digit, (int, float)): return False
+    else: return True
+#            raise ValueError("Tuples for vector operations must be all numbers: {}".format(t))
 
-def tuple_check(t1: tuple, t2: tuple) -> None:
+def tuple_check(t1: tuple, t2: tuple = None) -> None:
     """Returns None. Raises error if any of the tuple validation tests fail.
     """
-    tuple_validation(t1)
-    tuple_validation(t2)
-    same_shape(t1, t2)
+    if not valid_tuple(t1): 
+        raise ValueError(f"Input object {t1} is not valid for tuple vector operations.")
+    if not t2 is None and not valid_tuple(t2):
+        raise ValueError(f"Input object {t2} is not valid for tuple vector operations.")
+    if not t2 is None and not same_shape(t1, t2):
+        raise ValueError(f"Input tuples must be same shape, not {len(t1)} and {len(t2)}.")
 
 def dot(t1: tuple, t2: tuple) -> float:
     """
@@ -95,8 +103,8 @@ def add(t1: tuple, other) -> tuple:
     """
     Returns a tuple of element-wise multiplication of 't1' and 'other'
     """
-    tuple_validation(t1)
     if isinstance(other, (int, float)):
+        tuple_check(t1)
         out_dict = {idx: val+other for idx, val in enumerate(t1)}
     else: 
         tuple_check(t1, other)
@@ -107,8 +115,8 @@ def subtract(t1: tuple, other) -> tuple:
     """
     Returns a tuple of element-wise multiplication of 't1' and other
     """
-    tuple_validation(t1)
     if isinstance(other, (int, float)):
+        tuple_check(t1)
         out_dict = {idx: val-other for idx, val in enumerate(t1)}
     else: 
         tuple_check(t1, other)
@@ -119,8 +127,8 @@ def multiply(t1: tuple, other) -> tuple:
     """
     Returns a tuple of element-wise multiplication of 't1' and other
     """
-    tuple_validation(t1)
     if isinstance(other,(int, float)):
+        tuple_check(t1)
         out_dict = {idx: val*other for idx, val in enumerate(t1)}
     else: 
         tuple_check(t1, other)
@@ -133,7 +141,7 @@ def divide(t1: tuple, other) -> tuple:
     """
     out_dict = {}
     if isinstance(other, (int, float)):
-        tuple_validation(t1)
+        tuple_check(t1)
         for idx, val in enumerate(t1):
             if val == 0 and other == 0:
                 out_dict.update({idx: float("nan")})
@@ -156,7 +164,7 @@ def vround(t: tuple, precision = 0) -> tuple:
     """
     Returns a tuple with elements rounded to 'precision'.
     """
-    tuple_validation(t)
+    tuple_check(t)
     out_dict = {idx: round(val, precision) for idx, val in enumerate(t)}
     return collapse_to_tuple(out_dict, type(t))
 
@@ -166,7 +174,7 @@ def mean(t: tuple, ignore_empty = False) -> float:
     then only the values that are not either 0 or None are averaged.
     If 'ignore' is False, all values are used with None taken as 0. 
     """
-    tuple_validation(t)
+    tuple_check(t)
     count = 0
     total = 0
     for val in t:
@@ -186,7 +194,7 @@ def magnitude(t: tuple) -> float:
     Returns the magnitude of the tuple, 't', as a vector though it were
     a vector.
     """
-    tuple_validation(t)
+    tuple_check(t)
     mag_sqr = 0
     for val in t:
         mag_sqr += val**2
@@ -196,7 +204,7 @@ def normalize(t: tuple) -> tuple:
     """
     Returns the normalized unit vector of the vector tuple, 't'.
     """
-    tuple_validation(t)
+    tuple_check(t)
     return divide(t, magnitude(t))
 
 def _clip(n: float) -> float:
@@ -226,3 +234,9 @@ def angle(t1: tuple, t2: tuple, degrees = False) -> float:
         return pi/4 * rad2deg
     else:
         return acos(_clip(dot(t1, t2) / (magnitude(t1) * magnitude(t2)))) * rad2deg
+    
+if __name__ == "__main__":
+    a = (3, 4, 2.3)
+    b = (4.3, 5)
+    c = ("a", 3.2, 4)
+    d = (3, 4)
