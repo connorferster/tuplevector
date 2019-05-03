@@ -2,7 +2,7 @@
 Vectortuple: Treat tuples like one dimensional vectors!
 by Connor Ferster 03/2019
 """
-from math import pi, acos
+from math import pi, acos, sqrt
 
 def collapse_to_tuple(d: dict, tuple_type: type) -> tuple:
     """Returns a tuple (or namedtuple type) for the values
@@ -187,10 +187,10 @@ def magnitude(t: tuple) -> float:
     a vector.
     """
     tuple_validation(t)
-    mag2 = 0
+    mag_sqr = 0
     for val in t:
-        mag2 += val**2
-    return mag2**(1/2)
+        mag_sqr += val**2
+    return sqrt(mag_sqr)
     
 def normalize(t: tuple) -> tuple:
     """
