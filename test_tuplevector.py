@@ -1,9 +1,7 @@
 import math
 from collections import namedtuple
 import tuplevector as vec
-import numpy as np
 import pytest as pytest
-
 
 Point = namedtuple("Point", ["x", "y", "z"])
 Dimensions = namedtuple("Dimensions", ["kg", "m", "s", "A", "cd", "K", "mol"])

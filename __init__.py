@@ -3,6 +3,7 @@ Vectortuple: Treat tuples like one dimensional vectors!
 by Connor Ferster 03/2019
 """
 from math import pi, acos, sqrt
+from typing import Union
 
 def collapse_to_tuple(d: dict, tuple_type: type) -> tuple:
     """Returns a tuple (or namedtuple type) for the values
@@ -31,7 +32,7 @@ def is_namedtuple(t: tuple) -> bool:
         return False
     return all(type(n)==str for n in fields)
 
-def valid_tuple(t: tuple) -> None:
+def valid_tuple(t: tuple) -> bool:
     """
     Returns True if tuple, 't', passes all validation checks.
     Returns False otherwise.
@@ -40,18 +41,15 @@ def valid_tuple(t: tuple) -> None:
     if not all_numbers(t): return False
     return True
 
-        #raise TypeError("Inputs tuples must be tuples: {}".format(t))
-
-def same_shape(t1: tuple, t2: tuple) -> None:
+def same_shape(t1: tuple, t2: tuple) -> bool:
     """
     Returns True if t1 and t2 are the same shape. 
     False, otherwise."""
     if t1 and t2:
         return len(t1) == len(t2)
     return False
-        #raise ValueError("Tuples for vector math must be same size, not lengths {} and {}".format(len(t1), len(t2)))
 
-def all_numbers(t: tuple) -> None:
+def all_numbers(t: tuple) -> bool:
     """
     Returns True if all the items in, 't' are numbers.
     False otherwise.
@@ -59,10 +57,10 @@ def all_numbers(t: tuple) -> None:
     for digit in t:
         if not isinstance(digit, (int, float)): return False
     else: return True
-#            raise ValueError("Tuples for vector operations must be all numbers: {}".format(t))
 
 def tuple_check(t1: tuple, t2: tuple = None) -> None:
-    """Returns None. Raises error if any of the tuple validation tests fail.
+    """
+    Returns None. Raises error if any of the tuple validation tests fail.
     """
     if not valid_tuple(t1): 
         raise ValueError(f"Input object {t1} is not valid for tuple vector operations.")
@@ -95,72 +93,72 @@ def cross(t1: tuple, t2: tuple) -> tuple:
         if type(t1) is tuple:
             return (i,j,k)
         else:
-            return type(t1)(i,j,k)
+            return type(t1)(*(i,j,k))
     else:
         raise TypeError("Input tuples must be 3-dimensional. Got: {t1}, {t2}".format(t1=t1, t2=t2))
         
-def add(t1: tuple, other) -> tuple:
+def add(t1: tuple, other: Union[tuple, int, float]) -> tuple:
     """
     Returns a tuple of element-wise multiplication of 't1' and 'other'
     """
     if isinstance(other, (int, float)):
         tuple_check(t1)
-        out_dict = {idx: val+other for idx, val in enumerate(t1)}
+        acc = {idx: val+other for idx, val in enumerate(t1)}
     else: 
         tuple_check(t1, other)
-        out_dict = {idx: val+other[idx] for idx, val in enumerate(t1)}
-    return collapse_to_tuple(out_dict, type(t1))
+        acc = {idx: val+other[idx] for idx, val in enumerate(t1)}
+    return collapse_to_tuple(acc, type(t1))
 
-def subtract(t1: tuple, other) -> tuple:
+def subtract(t1: tuple, other: Union[tuple, int, float]) -> tuple:
     """
     Returns a tuple of element-wise multiplication of 't1' and other
     """
     if isinstance(other, (int, float)):
         tuple_check(t1)
-        out_dict = {idx: val-other for idx, val in enumerate(t1)}
+        acc = {idx: val-other for idx, val in enumerate(t1)}
     else: 
         tuple_check(t1, other)
-        out_dict = {idx: val-other[idx] for idx, val in enumerate(t1)}
-    return collapse_to_tuple(out_dict, type(t1))
+        acc = {idx: val-other[idx] for idx, val in enumerate(t1)}
+    return collapse_to_tuple(acc, type(t1))
         
-def multiply(t1: tuple, other) -> tuple:
+def multiply(t1: tuple, other: Union[tuple, int, float]) -> tuple:
     """
     Returns a tuple of element-wise multiplication of 't1' and other
     """
     if isinstance(other,(int, float)):
         tuple_check(t1)
-        out_dict = {idx: val*other for idx, val in enumerate(t1)}
+        acc = {idx: val*other for idx, val in enumerate(t1)}
     else: 
         tuple_check(t1, other)
-        out_dict = {idx: val*other[idx] for idx, val in enumerate(t1)}
-    return collapse_to_tuple(out_dict, type(t1))
-
-def divide(t1: tuple, other) -> tuple:
+        acc = {idx: val*other[idx] for idx, val in enumerate(t1)}
+    return collapse_to_tuple(acc, type(t1))
+    
+def divide(t1: tuple, other: Union[tuple, int, float]) -> tuple:    
     """
     Returns a tuple of element-wise division of 't1' and 't2'
     """
-    out_dict = {}
+    acc = {}
     if isinstance(other, (int, float)):
         tuple_check(t1)
         for idx, val in enumerate(t1):
             if val == 0 and other == 0:
-                out_dict.update({idx: float("nan")})
+                acc.update({idx: float("nan")})
             elif other == 0:
-                out_dict.update({idx: float("inf")})
+                acc.update({idx: float("inf")})
             else:
-                out_dict.update({idx: val/other})
+                acc.update({idx: val/other})
     else: 
         tuple_check(t1, other)
         for idx, val in enumerate(t1):
             if val == 0 and other[idx] == 0:
-                out_dict.update({idx: float("nan")})
+                acc.update({idx: float("nan")})
             elif other[idx] == 0:
-                out_dict.update({idx: float("inf")})
+                acc.update({idx: float("inf")})
             else:
-                out_dict.update({idx: val/other[idx]})
-    return collapse_to_tuple(out_dict, type(t1))
+                acc.update({idx: val/other[idx]})
+    return collapse_to_tuple(acc, type(t1))
 
-def vround(t: tuple, precision = 0) -> tuple:
+def vround(t: tuple, precision: int = 0) -> tuple:
     """
     Returns a tuple with elements rounded to 'precision'.
     """
@@ -168,11 +166,11 @@ def vround(t: tuple, precision = 0) -> tuple:
     out_dict = {idx: round(val, precision) for idx, val in enumerate(t)}
     return collapse_to_tuple(out_dict, type(t))
 
-def mean(t: tuple, ignore_empty = False) -> float:
+def mean(t: tuple, ignore_empty: bool = False) -> float:
     """
-    Returns the average of the values in the tuple, 't'. If 'ignore' is True,
-    then only the values that are not either 0 or None are averaged.
-    If 'ignore' is False, all values are used with None taken as 0. 
+    Returns the average of the values in the tuple, 't'. If 'ignore_empty' 
+    is True, then only the values that are not either 0 or None are averaged.
+    If 'ignore_empty' is False, all values are used and None is taken as 0. 
     """
     tuple_check(t)
     count = 0
@@ -191,8 +189,8 @@ def mean(t: tuple, ignore_empty = False) -> float:
 
 def magnitude(t: tuple) -> float:
     """
-    Returns the magnitude of the tuple, 't', as a vector though it were
-    a vector.
+    Returns the vector magnitude of the tuple, 't' using the 
+    Pythagorean method.
     """
     tuple_check(t)
     mag_sqr = 0
@@ -211,32 +209,25 @@ def _clip(n: float) -> float:
     """
     Helper function to emulate numpy.clip for the specific
     use case of preventing math domain errors on the 
-    acos function. 
+    acos function by "clipping" values that are > abs(1).
+    e.g. _clip(1.001) == 1
+         _clip(-1.5) == -1
+         _clip(0.80) == 0.80
     """
     sign = n / abs(n)
     if abs(n) > 1: return 1 * sign
     else: return n
         
 
-def angle(t1: tuple, t2: tuple, degrees = False) -> float:
+def angle(t1: tuple, t2: tuple, degrees: bool = False) -> float:
     """
     Returns the angle between two vector tuples, 't1' and 't2',
     in rads. If 'degrees' = True, then returned in degrees.
     """
-    # TODO: Fix math domain error when doing acos(1) for parallel vectors
-    rad2deg = 1
-    if degrees:
-        rad2deg = 180/pi
     tuple_check(t1,t2)
+    rad2deg = 1.0
+    if degrees: rad2deg = 180/pi
     denom = (magnitude(t1) * magnitude(t2))
+    if denom == 0: return pi/4 * rad2deg
+    else: return acos(_clip(dot(t1, t2) / (magnitude(t1) * magnitude(t2)))) * rad2deg
     
-    if denom == 0:
-        return pi/4 * rad2deg
-    else:
-        return acos(_clip(dot(t1, t2) / (magnitude(t1) * magnitude(t2)))) * rad2deg
-    
-if __name__ == "__main__":
-    a = (3, 4, 2.3)
-    b = (4.3, 5)
-    c = ("a", 3.2, 4)
-    d = (3, 4)
