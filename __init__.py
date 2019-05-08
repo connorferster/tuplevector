@@ -1,5 +1,6 @@
 """
-Vectortuple: Treat tuples like one dimensional vectors!
+tuplevector: Treat tuples of any kind (e.g. namedtuple, NamedTuple) 
+like one dimensional vectors!
 by Connor Ferster 03/2019
 """
 from math import pi, acos, sqrt
