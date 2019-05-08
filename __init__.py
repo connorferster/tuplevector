@@ -50,10 +50,10 @@ def tuple_check(t1: tuple, other: Any = None) -> None:
     if not tuple_valid_for_arithmetic(t1):
         raise ValueError(f"Input tuple {t1} is not valid for arithmetic operations.")
     if not other is None:
-        if isinstance(other, tuple) and not tuple_valid_for_arithmetic(other):
-            raise ValueError(f"Input tuple, {other}, is not valid for arithmetic operations.")
         if isinstance(other, tuple) and not same_shape(t1, other):
             raise ValueError(f"Input tuples must be same shape, not {len(t1)} and {len(other)}.")
+        if isinstance(other, tuple) and not tuple_valid_for_arithmetic(other):
+            raise ValueError(f"Input tuple, {other}, is not valid for arithmetic operations.")
         if not isinstance(other, tuple) and not valid_for_arithmetic(other):
             raise ValueError(f"Input object, {other}, is not valid for arithmetic operations.")
 

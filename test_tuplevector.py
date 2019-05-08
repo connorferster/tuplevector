@@ -62,7 +62,14 @@ def test_tuple_valid_for_arithmetic():
     assert vec.tuple_valid_for_arithmetic(LT1) == False
     
 def test_tuple_check():
-    pass
+    with pytest.raises(ValueError):
+        vec.tuple_check(3, T1)
+        vec.tuple_check(LT1, 3)
+        vec.tuple_check(NT1)
+        vec.tuple_check(D1, NT2)
+        vec.tuple_check(T3, NT2)
+        vec.tuple_check(T3, "A")
+        vec.tuple_check((1,), (2,), (3,))
     
 def test_same_shape():
     assert vec.same_shape(P1, D1) == False
@@ -107,7 +114,7 @@ def test_magnitude():
     
 def test_vround():
     assert vec.vround(T1, 3) == (4.5, 1.111, 2)
-    assert vec.vround(P2, 0) == Point(2, 3, 4)
+    assert vec.vround(P2, 0) == Point(x=2, y=3, z=4)
     
 def test_mean():
     assert vec.mean(P6) == 2.3333333333333335
@@ -117,7 +124,11 @@ def test_mean():
     assert vec.mean(L1) == 49.5
     
 def test__clip():
-    pass
+    assert vec._clip(-1) == -1
+    assert vec._clip(-1.00001) == -1
+    assert vec._clip(1.5) == 1
+    assert vec._clip(-0.3) == -0.3
+    assert vec._clip(0.4) == 0.4
 
 def test_normalize():
     assert vec.normalize(P1) == Point(x=0.49147318718299043, y=0.8355044182110838, z=0.24573659359149522)
