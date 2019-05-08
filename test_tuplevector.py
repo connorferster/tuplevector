@@ -1,7 +1,7 @@
 import math
 from collections import namedtuple
 import tuplevector as vec
-import pytest as pytest
+import pytest
 
 Point = namedtuple("Point", ["x", "y", "z"])
 Dimensions = namedtuple("Dimensions", ["kg", "m", "s", "A", "cd", "K", "mol"])
@@ -37,18 +37,6 @@ def test_collapse_to_tuple():
     assert D1 == D1A
     T1A = vec.collapse_to_tuple(dict(enumerate(T1)), type(T1))
     assert T1 == T1A
-    
-def test_isnamedtuple():
-    assert vec.is_namedtuple(P1) == True
-    assert vec.is_namedtuple(T1) == False
-
-def test_valid_tuple():
-    assert vec.valid_tuple(NT1) == False
-    assert vec.valid_tuple(NT2) == False
-    assert vec.valid_tuple(LT1) == False
-    assert vec.valid_tuple(P1) == True
-    assert vec.valid_tuple(T1) == True
-    assert vec.valid_tuple(L1) == True
     
 def test_same_shape():
     assert vec.same_shape(P1, D1) == False
