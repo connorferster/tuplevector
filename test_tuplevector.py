@@ -1,4 +1,6 @@
 import math
+import fractions
+import decimal
 from collections import namedtuple
 import tuplevector as vec
 import pytest
@@ -37,6 +39,30 @@ def test_collapse_to_tuple():
     assert D1 == D1A
     T1A = vec.collapse_to_tuple(dict(enumerate(T1)), type(T1))
     assert T1 == T1A
+
+def test_valid_for_arithmetic():
+    assert vec.valid_for_arithmetic(134) == True
+    assert vec.valid_for_arithmetic(23.5) == True
+    assert vec.valid_for_arithmetic(complex(3,4)) == True
+    assert vec.valid_for_arithmetic("apple") == False
+    assert vec.valid_for_arithmetic(fractions.Fraction(3,4)) == True
+    assert vec.valid_for_arithmetic(decimal.Decimal(3.123145645879)) == True
+    assert vec.valid_for_arithmetic(P1) == False
+    assert vec.valid_for_arithmetic(T1) == False
+    assert vec.valid_for_arithmetic(LT1) == False
+    
+def test_tuple_valid_for_arithmetic():
+    assert vec.tuple_valid_for_arithmetic(134) == False
+    assert vec.tuple_valid_for_arithmetic(23.5) == False
+    assert vec.tuple_valid_for_arithmetic(complex(3,4)) == False
+    assert vec.tuple_valid_for_arithmetic("apple") == False
+    assert vec.tuple_valid_for_arithmetic(fractions.Fraction(3,4)) == False
+    assert vec.tuple_valid_for_arithmetic(P1) == True
+    assert vec.tuple_valid_for_arithmetic(T1) == True
+    assert vec.tuple_valid_for_arithmetic(LT1) == False
+    
+def test_tuple_check():
+    pass
     
 def test_same_shape():
     assert vec.same_shape(P1, D1) == False
@@ -90,6 +116,9 @@ def test_mean():
     assert vec.mean(P6, True) == 3.5
     assert vec.mean(L1) == 49.5
     
+def test__clip():
+    pass
+
 def test_normalize():
     assert vec.normalize(P1) == Point(x=0.49147318718299043, y=0.8355044182110838, z=0.24573659359149522)
     assert vec.normalize(T1) == (0.8913991044053705, 0.22011615218116617, 0.39617737973572026)

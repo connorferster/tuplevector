@@ -36,6 +36,7 @@ def tuple_valid_for_arithmetic(t: tuple) -> bool:
     Returns True if all the items in, 't' are valid for arithmetic
     operations. Returns False otherwise.
     """
+    if not isinstance(t, tuple): return False
     for item in t:
         if not valid_for_arithmetic(item): return False
     return True
