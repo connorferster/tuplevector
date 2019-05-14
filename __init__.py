@@ -3,6 +3,12 @@ tuplevector: Treat tuples of any kind (e.g. namedtuple, NamedTuple)
 like one dimensional vectors!
 by Connor Ferster 03/2019
 """
+
+# TODO: Explore idea of removing all checks entirely and using a decorator
+# function to wrap all vector functions (with try/excepts) to capture errors 
+# such as tuples of different lengths, elements that do not do math, or 
+# other type errors. Could vastly speed performance.
+
 from math import pi, acos, sqrt
 from typing import Union, Any
 
@@ -28,9 +34,14 @@ def valid_for_arithmetic(other: Any) -> bool:
     Returns True if object 'other' is valid for arithmetic operations. 
     Returns False otherwise.
     """
-    math_ops = set(("__add__", "__sub__", "__mul__", "__truediv__", "__pow__"))
-    obj_methods = set(dir(other))
-    return math_ops <= obj_methods # 'math_ops' *is a subset of* 'obj_methods'
+    # Faster check
+    if isinstance(other, (int, float)):
+        return True
+    # Slower check that captures any object with implemented math operations
+    else:
+        math_ops = set(("__add__", "__sub__", "__mul__", "__truediv__", "__pow__"))
+        obj_methods = set(dir(other))
+        return math_ops <= obj_methods # 'math_ops' *is a subset of* 'obj_methods'
 
 def tuple_valid_for_arithmetic(t: tuple) -> bool:
     """
@@ -90,7 +101,7 @@ def add(t1: tuple, other: Union[tuple, int, float]) -> tuple:
     """
     Returns a tuple of element-wise multiplication of 't1' and 'other'
     """
-    if valid_for_arithmetic(other):
+    if valid_for_arithmetic(other) and not isinstance(other, tuple):
         tuple_check(t1)
         acc = {idx: val+other for idx, val in enumerate(t1)}
     else: 
@@ -102,7 +113,7 @@ def subtract(t1: tuple, other: Union[tuple, int, float]) -> tuple:
     """
     Returns a tuple of element-wise multiplication of 't1' and other
     """
-    if valid_for_arithmetic(other):
+    if valid_for_arithmetic(other) and not isinstance(other, tuple):
         tuple_check(t1)
         acc = {idx: val-other for idx, val in enumerate(t1)}
     else: 
@@ -114,7 +125,7 @@ def multiply(t1: tuple, other: Union[tuple, int, float]) -> tuple:
     """
     Returns a tuple of element-wise multiplication of 't1' and other
     """
-    if valid_for_arithmetic(other):
+    if valid_for_arithmetic(other) and not isinstance(other, tuple):
         tuple_check(t1)
         acc = {idx: val*other for idx, val in enumerate(t1)}
     else: 
@@ -123,7 +134,7 @@ def multiply(t1: tuple, other: Union[tuple, int, float]) -> tuple:
     return collapse_to_tuple(acc, type(t1))
     
 def divide(t1: tuple, other: Union[tuple, int, float], 
-           ignore_zero:bool = False) -> tuple:    
+           ignore_zeros:bool = False) -> tuple:    
     """
     Returns a tuple of element-wise division of 't1' and 't2'.
     If 'ignore_empty' is set to False, then the division will
@@ -131,7 +142,7 @@ def divide(t1: tuple, other: Union[tuple, int, float],
     elements instead.
     """
     acc = {}
-    if valid_for_arithmetic(other):
+    if valid_for_arithmetic(other) and not isinstance(other, tuple):
         tuple_check(t1)
         for idx, val in enumerate(t1):
             if val == 0 and other == 0:
@@ -144,7 +155,7 @@ def divide(t1: tuple, other: Union[tuple, int, float],
         tuple_check(t1, other)
         for idx, val in enumerate(t1):
             if val == 0 and other[idx] == 0:
-                if ignore_zero:
+                if ignore_zeros:
                     acc.update({idx: 0})
                 else:
                     acc.update({idx: float("nan")})

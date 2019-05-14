@@ -103,6 +103,7 @@ def test_multiply():
     
 def test_divide():
     assert vec.divide(P1, P3) == Point(x=2.0, y=3.4, z=float("inf"))
+    assert vec.divide(D2, D1, ignore_zeros = True) == Dimensions(*(2, 2, 2, 0,0,0,0))
     assert vec.divide(D2, 2) == D1
     
 def test_magnitude():
