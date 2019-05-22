@@ -192,6 +192,7 @@ def mean(t: tuple, ignore_empty: bool = False) -> float:
         else:
             total += val
             count += 1  
+    count = count or 1 # in case t is an empty vector
     return total/count
 
 def magnitude(t: tuple) -> float:
