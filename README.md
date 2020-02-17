@@ -18,7 +18,7 @@ of your first input NamedTuple.
 
 Example:
 
-```
+```python
 from collections import namedtuple
 from typing import NamedTuple
 import tuplevector as vec
@@ -45,4 +45,21 @@ Sure, you could. But:
 * Do you really need to import all of NumPy to add some vectors?
 * You would have to give up your elegant namedtuple data type
 * Some platforms cannot run NumPy (e.g. MicroPython)
+
+## Available vector functions
+
+```python
+vec.add(t1: tuple, t2: tuple)
+vec.subtract(t1: tuple, t2: tuple)
+vec.multiply(t1: tuple, t2: tuple)
+vec.divide(t1: tuple, t2: tuple, ignore_zeros:bool = False)
+vec.angle(t1: tuple, t2: tuple)
+vec.dot(t1: tuple, t2: tuple)
+vec.cross(t1: tuple, t2: tuple)
+
+vec.mean(t: tuple)
+vec.magnitude(t: tuple)
+vec.normalize(t: tuple)
+```
+
 
