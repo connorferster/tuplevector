@@ -1,8 +1,3 @@
-.. forallpeople documentation master file, created by
-   sphinx-quickstart on Wed May 15 09:20:02 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 # tuplevector: Treat tuples (and NamedTuples) as vectors
 
 Tuplevector is a simple library of pure functions that allow
