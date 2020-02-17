@@ -3,8 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-tuplevector: Treat tuples (and NamedTuples) as vectors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# tuplevector: Treat tuples (and NamedTuples) as vectors
 
 Tuplevector is a simple library of pure functions that allow
 for element-wise arithmetic operations on numeric tuples 
@@ -14,8 +13,8 @@ Could you have done this yourself? Yes, probably.
 But now you don't have to.
 
 
-Why tuplevector? What's the advantage?
-======================================
+## Why tuplevector? What's the advantage?
+
 
 The big advantage is that you can do vector arithmetic on your own,
 user-defined NamedTuple and the result will be given back to you
@@ -45,35 +44,10 @@ print(vec.add(P1, T1))
 >>> Point(x=4, y=6, z=8)
 ```
 
-Wouldn't I just use NumPy for vector math?
-==========================================
+## Wouldn't I just use NumPy for vector math?
 
 Sure, you could. But:
 * Do you really need to import all of NumPy to add some vectors?
 * You would have to give up your elegant namedtuple data type
 * Some platforms cannot run NumPy (e.g. MicroPython)
 
-
-
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Using the Library
-   install
-   usage
-
-
-.. toctree::
- :maxdepth: 2
- :caption: Motivation and Use-cases
-
-
-
- usage
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
